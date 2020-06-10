@@ -48,7 +48,7 @@ Spot instances have slightly different [running/stopping](https://docs.aws.amazo
 Copy and paste into your Terraform configuration, insert the variables, 
 and run `terraform init`:
 
-```hcl-terraform
+```hcl
 module "infra-stop-nightly" {
   source                         = "popov/aws-lambda-scheduler"
   name                           = "${terraform.workspace}-stop-infra"
@@ -107,7 +107,7 @@ module "infra-start-daily" {
 > NOTE: All examples stop every day from Monday to Friday at 17:00 UTC and start every day from Monday to Friday at 07:00 UTC
 >
 * [AutoScaling scheduler](examples/autoscaling-schedule) - Create lambda functions to suspend autoscaling group 
-with `ToStop = true` and ` TestTag = <radom_value>` tags and terminate its EC2 instances.
+with `ToStop = true` and ` TestTag = <random_value>` tags and terminate its EC2 instances.
 * [Spot scheduler](examples/spot-schedule) - Create lambda functions to stop Spot instance with `ToStop = true` and `Environment = test` tags.
 * [EC2 scheduler](examples/ec2-schedule) - Create lambda functions to stop EC2 with `ToStop = true` and `Environment = test` tags.
 * [EC2 Bastion scheduler](examples/ec2-bastion-schedule) - Create lambda functions to stop EC2 Bastion host with `ToStop = true` and `Environment = test` tags.
@@ -128,7 +128,7 @@ with `ToStop = true` and ` TestTag = <radom_value>` tags and terminate its EC2 i
 | ec2_schedule | Enable scheduling on EC2 instance resources | string | `"false"` | no |
 | rds_schedule | Enable scheduling on RDS resources | string | `"false"` | no |
 | cloudwatch_alarm_schedule | Enable scheduleding on cloudwatch alarm resources | string | `"false"` | no |
-| resource_tags | Set the tags use for identify resources to stop or start | map | { ToStop = "true" } | yes |
+| resource_tags | Set the tags use for identify resources to stop or start | map | [{ ToStop = "true" }] | yes |
 
 #### Outputs
 
@@ -201,7 +201,7 @@ This project is licensed under the [MIT](LICENSE.md)
 
 ## Acknowledgments
 
-There is a library which does almost the same, but its Lambda functions are written on Python. 
+There is [a library](https://github.com/diodonfrost/terraform-aws-lambda-scheduler-stop-start) which does almost the same, but its Lambda functions are written on Python. 
 At the moment when I was searching for a Terraform module to stop and run my infrastructure, 
 it didn't work correctly with Spot Instances, so there was a dilemma to write an issue 
 and wait till the maintainer fix it, or implement it by myself. The result you can see in this repository. 
