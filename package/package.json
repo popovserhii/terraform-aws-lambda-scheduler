@@ -1,0 +1,27 @@
+{
+  "name": "aws-lambda-scheduler",
+  "version": "0.1.0",
+  "description": "AWS Lambda Scheduler help to start and stop infrastructure by schedule",
+  "main": "src/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "app-module-path": "^2.2.0",
+    "aws-sdk": "^2.663.0",
+    "aws-sdk-mock": "^5.1.0",
+    "chai": "*",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "*",
+    "sinon": "^9.0.2"
+  },
+  "scripts": {
+    "test": "mocha 'test/unit/**/*.test.js' --recursive --reporter spec --timeout 60000 --exit"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "scheduler",
+    "cloud-watch"
+  ],
+  "author": "Serhii Popov <popow.serhii@gmail.com>",
+  "license": "MIT"
+}
