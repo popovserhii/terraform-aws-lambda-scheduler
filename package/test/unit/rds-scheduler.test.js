@@ -13,9 +13,20 @@ chai.use(chaiAsPromised);
 let expect = chai.expect;
 let assert = chai.assert;
 
+let consoleLogStub = null;
+
 describe('AWS RDS Lambda Scheduler', () => {
   beforeEach(function() {
     AWSMock.setSDKInstance(AWS);
+    consoleLogStub = sinon.stub(console, 'log');
+  });
+
+  afterEach(function() {
+    // Important! Restore AWS SDK
+    AWSMock.restore();
+
+    // Ignore console.log() output
+    consoleLogStub.restore();
   });
 
   it('run: resourceTags cannot be empty', async() => {
@@ -26,8 +37,7 @@ describe('AWS RDS Lambda Scheduler', () => {
   });
 
   it('run: "stop" action should be called once', async() => {
-    // Ignore console.log() output
-    let consoleLogSpy = sinon.stub(console, 'log');
+    //let consoleLogSpy = sinon.stub(console, 'log');
 
     let tags = [{ "Key": "ToStop", "Value": "true" }, { "Key": "Environment", "Value": "stage" }];
 
@@ -45,10 +55,6 @@ describe('AWS RDS Lambda Scheduler', () => {
 
     sinon.assert.calledOnce(stopStub);
     sinon.assert.calledWith(stopStub, 'DB-INSTANCE-TEST-ID');
-
-    // Important! Restore AWS SDK
-    AWSMock.restore('RDS');
-    consoleLogSpy.restore();
   });
 
   it('run: "stop" action should not be called according to mismatching of tags', async() => {
@@ -69,14 +75,11 @@ describe('AWS RDS Lambda Scheduler', () => {
 
     sinon.assert.notCalled(stopStub);
     //sinon.assert.calledWith(stopStub, 'DB-INSTANCE-TEST-ID');
-
-    // Important! Restore AWS SDK
-    AWSMock.restore('RDS');
   });
 
   it('stop: should stop instance by certain ID', async() => {
     // Ignore console.log() output
-    let consoleLogSpy = sinon.stub(console, 'log');
+    //let consoleLogSpy = sinon.stub(console, 'log');
 
     let stopDBInstanceSpy = sinon.spy((params, callback) => {
       callback(null, { 'StoppingInstances': [{ DBInstanceIdentifier: "TEST-RDS-ID-123" }] });
@@ -99,11 +102,6 @@ describe('AWS RDS Lambda Scheduler', () => {
     assert.isTrue(stopDBInstanceSpy.calledWith(expectedParams), 'should pass correct parameters');
     // Expect passed JSON parameters have required 'DBInstanceIdentifier' property
     expect(stopDBInstanceSpy.getCall(0).args[0]).to.have.property('DBInstanceIdentifier');
-
-    // Important! Restore AWS SDK
-    AWSMock.restore('RDS');
-
-    consoleLogSpy.restore();
   });
 
 });

@@ -18,10 +18,9 @@ class AutoScalingScheduler {
    *
    * @param {String} action Perform an action name
    * @param {Array} resourceTags "{tag:value}" pairs to use for filter resources
-   * @param callback
    * @returns {Promise<void>}
    */
-  async run(action, resourceTags, callback) {
+  async run(action, resourceTags) {
     if (!resourceTags) {
       throw new Error('"resourceTags" must be specified, otherwise you will shoutdown all instances');
     }
@@ -30,12 +29,10 @@ class AutoScalingScheduler {
       let asgData = await this.autoScaling.describeAutoScalingGroups().promise();
       for (const asg of asgData.AutoScalingGroups) {
         if (asg.Tags.length && Utils.matchTags(resourceTags, asg.Tags)) {
-          let data = await this[action](asg);
-          //callback(null, data);
+          await this[action](asg);
         }
       }
     } catch (e) {
-      //callback(e, null);
       console.error(e.stack);
     }
   }
@@ -51,9 +48,8 @@ class AutoScalingScheduler {
       AutoScalingGroupName: asg.AutoScalingGroupName,
     };
     let data = await this.autoScaling.suspendProcesses(params).promise();
-    console.log(`Suspend AutoScaling group ${asg.AutoScalingGroupName}`, JSON.stringify(data));
 
-    //let instanceIds = asg.Instances.forEach((instance) => { instance.InstanceId });
+    console.log(`Suspend AutoScaling group ${asg.AutoScalingGroupName}`, JSON.stringify(data));
 
     for (const instance of asg.Instances) {
       let params = {
@@ -68,6 +64,7 @@ class AutoScalingScheduler {
           data = await this.ec2.stopInstances(params).promise();
         } catch (e) {
           // Otherwise try to terminate it (in most cases for EC2 Spot instances)
+          //console.log("I'm going to terminate instance");
           data = await this.ec2.terminateInstances(params).promise();
         }
         console.log(`Stop EC2 instance ${instance.InstanceId}`, JSON.stringify(data));
@@ -99,9 +96,8 @@ class AutoScalingScheduler {
       // @todo Start only instances which can be started: "Values": ["pending", "stopping", "stopped"],
       let data = await this.ec2.startInstances(params).promise();
 
-      console.log(`Stop EC2 instance ${instance.InstanceId}`, JSON.stringify(data));
+      console.log(`Start EC2 instance ${instance.InstanceId}`, JSON.stringify(data));
     }
-    return data;
   }
 }
 

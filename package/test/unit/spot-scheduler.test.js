@@ -8,9 +8,19 @@ const chai = require('chai');
 const sinon = require('sinon');
 const SpotScheduler = require('spot-scheduler');
 
-describe('AWS EC2 Spot Instances Lambda Scheduler', () => {
+let consoleLogStub = null;
+
+describe('AWS EC2 Spot Instances Lambda Scheduler', async () => {
   beforeEach(function() {
     AWSMock.setSDKInstance(AWS);
+    consoleLogStub = sinon.stub(console, 'log');
+  });
+
+  afterEach(function() {
+    AWSMock.restore();
+
+    // Ignore console.log() output
+    consoleLogStub.restore();
   });
 
   [
@@ -22,7 +32,7 @@ describe('AWS EC2 Spot Instances Lambda Scheduler', () => {
       let tags = [{ "Key": "ToStop", "Value": "true" }, { "Key": "Environment", "Value": "stage" }];
 
       // Ignore console.log() output
-      let consoleLogSpy = sinon.stub(console, 'log');
+      //let consoleLogSpy = sandbox.stub(console, 'log');
       // Important creating the spy/sub in such way there are several calls to AWS under the hood
       let actionInstancesSpy = sinon.spy((params, callback) => {
         callback(null, { [run.responseKey]: [{ InstanceId: "TEST-SPOT-ID-123" }] });
@@ -49,7 +59,8 @@ describe('AWS EC2 Spot Instances Lambda Scheduler', () => {
       AWSMock.restore('EC2');
       AWSMock.restore('AutoScaling');
 
-      consoleLogSpy.restore();
+      //actionInstancesSpy.restore();
+      //consoleLogSpy.restore();
     });
   });
 });

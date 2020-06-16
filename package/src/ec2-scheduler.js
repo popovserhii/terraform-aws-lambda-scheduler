@@ -18,10 +18,9 @@ class Ec2Scheduler {
    *
    * @param action String
    * @param resourceTags Array {key:value} pairs to use for filter resources
-   * @param callback
    * @returns {Promise<void>}
    */
-  async run(action, resourceTags, callback) {
+  async run(action, resourceTags) {
     if (!resourceTags) {
       throw new Error('Resource tags must be specified otherwise you will shoutdown all instances');
     }
@@ -49,16 +48,16 @@ class Ec2Scheduler {
           };
 
           let autoScaling = await this.autoScaling.describeAutoScalingInstances(asParams).promise();
+          console.log('autoScaling', autoScaling);
+
           if (!autoScaling.AutoScalingInstances.length) {
             let data = await this[action](instance.InstanceId);
 
-            //callback(null, data);
             console.log(`${Utils.ucFirst(action)} EC2 instance ${instance.InstanceId}`, JSON.stringify(data));
           }
         }
       }
     } catch (e) {
-      //callback(e, null);
       console.error(e.stack);
     }
   }
