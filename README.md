@@ -36,7 +36,7 @@ Spot instances have slightly different [running/stopping](https://docs.aws.amazo
 
 - Amazon EC2 Spot instances **can** now be [stopped and started](https://aws.amazon.com/about-aws/whats-new/2020/01/amazon-ec2-spot-instances-stopped-started-similar-to-on-demand-instances/) similar to On-Demand instances.
   This feature is only available for instances with an Amazon EBS volume as their root device. 
-- AWS can **stop** instance if it has been run with `persistance` request, otherwise we can only terminate it.
+- AWS can **stop** instance if it has been run with **persistance** request, otherwise we can only terminate it.
 - AWS **can't stop** a Spot Instance if it is part of a fleet or launch group, Availability Zone group, or Spot block. 
   You can only **terminate** them.  
 - The **stop** feature is available for **persistent** Spot requests and Spot Fleets with the **maintain** fleet option enabled. 
@@ -50,7 +50,7 @@ and run `terraform init`:
 
 ```hcl
 module "infra-stop-nightly" {
-  source                         = "popov/aws-lambda-scheduler"
+  source                         = "popovserhii/lambda-scheduler/aws"
   name                           = "${terraform.workspace}-stop-infra"
   aws_regions                    = ["eu-central-1"]
 
@@ -76,7 +76,7 @@ module "infra-stop-nightly" {
 } 
 
 module "infra-start-daily" {
-  source                         = "popov/aws-lambda-scheduler"
+  source                         = "popovserhii/lambda-scheduler/aws"
   name                           = "${terraform.workspace}-stop-infra"
   aws_regions                    = ["eu-central-1"]
 
